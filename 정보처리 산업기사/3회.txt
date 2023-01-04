@@ -1,0 +1,722 @@
+코드위주로 정리되어 있으며 최대한 짧은 소스로 화면만들기가 목적이라 jsp안에 자바,자바스크립트,쿼리가 있습니다.
+
+
+목차 
+0.환경설정 및 버전확인
+1.query
+2.dbConnection.jsp
+3.common.css
+4.header.jsp
+5.footer.jsp
+6.화면구성틀 설명
+7.index.jsp
+8.list.jsp
+9.update.jsp
+10.actionUpdate.jsp
+11.join.jsp
+12.actionInsert.jsp
+13.money.jsp
+
+
+
+
+
+0.
+환경설정 및 버전확인
+-cmd -> sqlplus 입력  SQL*Plus: Release 11.2.x 확인 
+Enter user-name : system
+Enter password : 1234 (비밀번호입력시 아무런 표시가없습니다. 확실하게 누르세요)
+
+비밀번호오류시
+ERROR:
+ORA-01017: invalid username/passsys word; logon denied
+system계정 비밀번호 변경하는법
+sys as sysdba
+비번없이 엔터
+alter user system identified by 1234;
+
+conn system/1234;
+
+-cmd -> java -version 입력 java version "1.8.x 확인
+-이클립스 workspace는 c바로 밑에 hrdkorea
+-이클립스 -> window -> show view -> server - >  하단의 창 서버 선택해서 톰캣 연결하기 / c폴더 밑에 apache있나확인 8.0이상확인하고 그에 맞게 연결하기 -> 포트수정하기 8090
+-이클립스 -> preference -> jsp/html/css/spelling/workspace 모두 utf-8로 apply
+-이클립스 project Explorer 우클릭 -> new -> project -> Dynamic Web Project -> HRD_비밀번호
+-시험끝나고 난후 hrdkorea 압축해서 sw_비밀번호.zip으로 제출해야합니다.
+
+
+1.
+query
+sql developer에서 [sql start] ~ [sql end] 부분 붙여놓고 실행하세요
+오류시 데이터를 update하는것보다 (ex. member_tbl_02 테이블에 custno가 잘못들어가거나.. money_tbl_02의 custno가 다섯자리이거나.. ) 모두 지우고 다시 create, insert하는것이 더 빠를 경우가 있습니다.
+그 경우를 대비해 어딘가에 적어놓으세요.
+[sql 오류시 start] ~ [sql 오류시 end] 실행해서 모두 지운 다음  [sql start] ~ [sql end] 다시 실행하세요
+한꺼번에 실행하지 마시고 ;단위로 블록잡고 ctrl+enter실행으로 작은단위로 결과 보는것이 좋습니다. 
+
+[sql start]
+-- 회원정보 테이블 생성
+create table member_tbl_02 (
+	custno number(6),
+	custname varchar2(20),
+	phone varchar2(13),
+	address varchar2(60),
+	joindate date,
+	grade char(1),
+	city char(2),
+	primary key(custno)
+);
+
+-- 회원정보 테이블 시퀸스 생성
+create sequence member_seq
+start with 100001
+increment by 1;
+
+-- 회원매출 테이블 생성
+create table money_tbl_02 (
+	custno number(6),
+	salenol number(8),
+	pcost number(8),
+	amount number(4),
+	price number(8),
+	pcode varchar2(4),
+	sdate date,
+	primary key(custno, salenol)
+);
+
+--회원정보테이블 값 넣기 
+insert into member_tbl_02 values(member_seq.nextval, '김행복', '010-1111-2222', '서울 동대문구 휘경1동', '20151202', 'A', '01');
+insert into member_tbl_02 values(member_seq.nextval, '이축복', '010-1111-3333', '서울 동대문구 휘경2동', '20151206', 'B', '01');
+insert into member_tbl_02 values(member_seq.nextval, '장믿음', '010-1111-4444', '울릉군 울릉읍 독도1리', '20151001', 'B', '30');
+insert into member_tbl_02 values(member_seq.nextval, '최사랑', '010-1111-5555', '울릉군 울릉읍 독도2리', '20151113', 'A', '30');
+insert into member_tbl_02 values(member_seq.nextval, '진평화', '010-1111-6666', '제주도 제주시 외나무골', '20151225', 'B', '60');
+insert into member_tbl_02 values(member_seq.nextval, '차공단', '010-1111-7777', '제주도 제주시 감나무골', '20151211', 'C', '60') ;
+
+--회원매출테이블 값 넣기 
+insert into money_tbl_02 values(100001, 20160001, 500, 5, 2500, 'A001', '20160101');
+insert into money_tbl_02 values(100001, 20160002, 1000, 4, 4000, 'A002', '20160101');
+insert into money_tbl_02 values(100001, 20160003, 500, 3, 1500, 'A008', '20160101');
+insert into money_tbl_02 values(100002, 20160004, 2000, 1, 2000, 'A004', '20160102');
+insert into money_tbl_02 values(100002, 20160005, 500, 1, 500, 'A001', '20160103');
+insert into money_tbl_02 values(100003, 20160006, 1500, 2, 3000, 'A003', '20160103');
+insert into money_tbl_02 values(100004, 20160007, 500, 2, 1000, 'A001', '20160104');
+insert into money_tbl_02 values(100004, 20160008, 300, 1, 300, 'A005', '20160104');
+insert into money_tbl_02 values(100004, 20160009, 600, 1, 600, 'A006', '20160104');
+insert into money_tbl_02 values(100004, 20160010, 3000, 1, 3000, 'A007', '20160106');
+[sql end]
+
+[sql 오류시 start]
+drop table member_tbl_02;
+drop table money_tbl_02;
+drop sequence member_seq;
+[sql 오류시 end]
+
+
+--리스트조회화면
+SELECT custno, custname, phone, address, city, To_CHAR(joindate, 'YYYY-MM-DD') AS joindate, DECODE( grade, 'A', 'VIP', 'B', '일반', '직원' ) AS grade FROM member_tbl_02 ORDER BY custno
+
+--수정화면
+SELECT custname, phone, address, TO_CHAR(joindate, 'YYYY-MM-DD') AS joindate, grade, city From member_tbl_02 WHERE custno = ?
+UPDATE member_tbl_02 SET custname = ?, phone = ?, address = ?, joindate = ?, grade = ?, city = ? WHERE custno = ?
+
+--등록화면
+SELECT MAX(custno) FROM member_tbl_02;
+INSERT INTO member_tbl_02 values (member_seq.nextval, ?, ?, ?, ?, ?, ?)
+
+--매출조회화면
+SELECT a.custno, a.custname, a.grade AS grade, sum(b.price) as price
+FROM member_tbl_02 a JOIN money_tbl_02 b
+ON a.custno = b.custno
+GROUP by a.custno, a.custname, a.grade
+ORDER by price desc;
+
+
+이클립스
+2.
+오라클DB에서 데이터를 가지고 오기 위한 베이스 코드입니다. 모든 화면에 include됩니다.
+이떄 C:\oraclexe\app\oracle\product\11.2.0\server\jdbc\lib 가셔서 ojdbc6.jar복사해서 본인 프로젝트의 WebContent\WEB-INF\lib 폴더 안에다가 넣어줍니다.
+[dbConnection.jsp]
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*" %>
+<%
+	/* 한글 깨짐 방지 */
+	request.setCharacterEncoding("UTF-8");
+	String sql = "";
+	Class.forName("oracle.jdbc.OracleDriver");
+	Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@//localhost:1521/xe", "system", "1234");
+%>
+
+
+
+
+
+3.
+화면 구성요소들의 틀만 잡을수있게 해주는 css입니다. 모든 화면에 include됩니다.
+WebContent/resources/css 폴더안에 common.css 생성
+[common.css]
+@charset "UTF-8";
+
+header {
+	position: fixed;
+	width: 100%;
+	height: 40px;
+	background-color: blue;
+	top: 0px;
+	text-align: center;
+	color: white;
+}
+
+nav {
+	position: fixed;
+	width: 100%;
+	height: 30px;
+	background-color: lightblue;
+	top: 40px;
+	line-height: 10px;
+	color: white;
+}
+
+footer {
+	position: fixed;
+	width: 100%;
+	height: 40px;
+	background-color: blue;
+	bottom: 0px;
+	text-align: center;
+	color: white;
+}
+
+section {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	background-color: lightgrey;
+	top: 70px;
+}
+
+nav a {
+	padding-right: 40px;
+	line-height: 40px;
+} 
+
+form {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+table {
+	border: 1px solid black;
+	border-collapse: collapse;
+	width: 60%;
+}
+
+th, td {
+	border: 1px solid black;
+}
+
+h2 {
+	text-align: center;
+}
+
+
+
+
+
+4.
+화면 상단에 메뉴바가 속해있는 haader를 작성합니다. 모든 화면에 include됩니다.
+[header.jsp]
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<header>쇼핑몰 회원 관리 Ver 1.0</header>
+<nav>
+	<a href="./join.jsp">회원등록</a> 
+	<a href="./list.jsp">회원목록 조회/수정</a>
+	<a href="./money.jsp">회원매출조회</a>
+	<a href="./index.jsp">홈으로</a>
+</nav>
+
+
+
+
+
+
+5.
+화면 하단에 항상 고정될 footer를 작성합니다. 모든 화면에 include됩니다.
+[footer.jsp]
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<footer>
+	HRDKOREA CopyRightⓒ2016 All rights reserved Human Resources Development Service Korea
+</footer>
+
+
+
+
+
+6.
+공통으로 사용하려고 만들어 놓은 common.css, dbConnection.jsp , header.jsp, footer.jsp 를 조합하여 기본화면 틀을 만듭니다.
+jsp로 게시판 만들기시 jsp tiles, jsp template로 기본화면 틀을 잡습니다. 사용하면 좋으나 복잡해지므로 임시적으로 이렇게 구현하여 사용합니다.
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="dbConnection.jsp" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="resources/css/common.css" />
+</head>
+	<body>
+		<%@ include file="header.jsp" %>
+		<section>
+			<h2>현재페이명 적어주기(회원등록 or 회원</h2>
+			<!--해당 화면 start-->
+				해당 페이지 내용적기 ( 회원등록화면 or 회원목록조회 or 회원목록수정 or 회원매출조회 or 홈으로 )
+			<!--해당 화면 end-->
+		</section>
+		<%@ include file="footer.jsp" %>
+</body>
+</html>
+
+
+
+
+7.홈으로 화면
+[index.jsp]
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="resources/css/common.css" />
+</head>
+<body>
+	<%@ include file="header.jsp" %>
+	<section>
+		<h2>쇼핑몰회원관리프로그램</h2>
+		<h3>쇼핑몰 회원정보와 회원매출정보 데이터베이스를 구축하고 회원관리 프로그램을 작성하는 프로그램이다.</h3>
+		<h3>프로그램 작업 순서</h3>
+		<h3>1.회원정보 테이블을 생성한다.</h3>
+		<h3>2.매출정보 테이블을 생성한다.</h3>
+		<h3>3.회원정보,매출정보 이블에 제시된 문제지와 참조데이터를 추가 생섷한다.</h3>
+		<h3>4.회원정보 입력 화면프로그램을 작성한다.</h3>
+		<h3>5.회원정보 조회 프로그램을 작성한다.</h3>
+		<h3>6.회원매출정보 조회 프로그램을 작성한다.</h3>
+	</section>
+	<%@ include file="footer.jsp" %>
+</body>
+</html>
+
+
+
+
+
+8.회원목록조회/수정화면
+[list.jsp]
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ include file="dbConnection.jsp"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="resources/css/common.css" />
+</head>
+<body>
+	<%@ include file="header.jsp" %>
+		<section>
+		<h2>홈쇼핑 회원 등록</h2>
+		<form>
+			<table>
+				<colgroup>
+					<col width="10%">
+					<col width="10%">
+					<col width="20%">
+					<col width="20%">
+					<col width="20%">
+					<col width="10%">
+					<col width="10%">
+				</colgroup>
+				<thead>
+					<tr>
+						<th>회원번호</th>
+						<th>회원성명</th>
+						<th>전화번호</th>
+						<th>주소</th>
+						<th>가입일자</th>
+						<th>고객등급</th>
+						<th>거주지역</th>
+					</tr>
+				</thead>
+				<tbody>
+					<%
+						/* 회원정보 list 가져오기 */
+						sql = "SELECT custno, custname, phone, address, city, To_CHAR(joindate, 'YYYY-MM-DD') as joindate, DECODE( grade, 'A', 'VIP', 'B', '일반', '직원' ) AS grade from member_tbl_02 order by custno asc";
+						ResultSet res = conn.prepareStatement(sql).executeQuery();
+						String custno, custname, phone, address, joindate, grade, city;
+						
+						while (res.next()) {
+							custno = res.getString("custno");
+							custname = res.getString("custname");
+							phone = res.getString("phone");
+							address = res.getString("address");
+							grade = res.getString("grade");
+							city = res.getString("city");
+							joindate = res.getString("joindate");
+							grade = res.getString("grade");
+						
+					%>
+						<tr style="text-align: center;">
+							<td><a href="./update.jsp?custno=<%=custno%>"><%=custno%></a></td>
+							<td><%=custname%></td>
+							<td><%=phone%></td>
+							<td><%=address%></td>
+							<td><%=joindate%></td>
+							<td><%=grade%></td>
+							<td><%=city%></td>
+						</tr>
+					<%
+						}
+					%>
+				</tbody>
+			</table>
+		</form>
+	</section>
+	<%@ include file="footer.jsp" %>
+</body>
+</html>
+
+
+
+
+
+9.회원목록조회/수정 화면에서 조회된 결과 리스트중 회원번호 선택시 화면 
+[update.jsp]
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="dbConnection.jsp"%>
+<!--회원 등록 화면 -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="resources/css/common.css" />
+<%
+	/* data 가져오기 */
+	String custno = request.getParameter("custno");
+	String custname, phone, address, joindate, grade, city;
+
+	sql = "SELECT custname, phone, address, to_char(joindate, 'YYYY-MM-DD') AS joindate, grade, city From member_tbl_02 where custno = " + custno;
+	ResultSet res = conn.prepareStatement(sql).executeQuery();
+	res.next();
+
+	custname = res.getString("custname");
+	phone = res.getString("phone");
+	address = res.getString("address");
+	joindate = res.getString("joindate");
+	grade = res.getString("grade");
+	city = res.getString("city");
+%>
+</head>
+<body>
+	<%@ include file="header.jsp" %>
+	<section>
+		<h2>홈쇼핑 회원 수정</h2>
+		<iframe name="frm" style="display: none;"></iframe>
+		<form name="updateForm" action="./actionUpdate.jsp" method="post" target="frm">
+			<table>
+				<colgroup>
+					<col width="20%">
+					<col width="80%">
+				</colgroup>
+				<tr>
+					<th>회원번호(자동발생)</th>
+					<td><input type="text" name="custno" maxlength="20"
+						value="<%=custno%>" readonly></td>
+				</tr>
+				<tr>
+					<th>회원성명</th>
+					<td><input type="text" name="custname" maxlength="20"
+						value="<%=custname%>"></td>
+				</tr>
+				<tr>
+					<th>회원전화</th>
+					<td><input type="text" name="phone" maxlength="30"
+						value="<%=phone%>"></td>
+				</tr>
+				<tr>
+					<th>회원주소</th>
+					<td><input type="text" name="address" maxlength="40"
+						value="<%=address%>"></td>
+				</tr>
+				<tr>
+					<th>가입일자</th>
+					<td><input type="text" name="joindate" maxlength="10"
+						value="<%=joindate%>"></td>
+				</tr>
+				<tr>
+					<th>고객등급 <br>(A:VIP, B:일반, C:직원)
+					</th>
+					<td><input type="text" name="grade" maxlength="1"
+						value="<%=grade%>"></td>
+				</tr>
+				<tr>
+					<th>도시코드</th>
+					<td><input type="text" name="city" maxlength="20" value="<%=city%>"></td>
+				</tr>
+				<tr style="text-align: center">
+					<td colspan="2">
+						<button type="submit">수정</button>
+						<button type="button" onclick="location.href='./list.jsp'">목록</button>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</section>
+	<%@ include file="footer.jsp" %>
+</body>
+
+
+
+
+
+10.
+회원수정 submit시 처리되는 jsp(위의 8번 화면에서 수정버튼 클릭시 연결되는 jsp)
+[actionUpdate.jsp]
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*" %>
+<%@ include file="dbConnection.jsp" %>
+<!--회원목록수정처리-->
+<%
+	sql  = "update member_tbl_02 SET custname = ?, phone = ?, address = ?, joindate = ?, grade = ?, city = ? where custno = ?";
+	PreparedStatement pstmt = conn.prepareStatement(sql);
+	pstmt.setString(1, request.getParameter("custname"));
+	pstmt.setString(2, request.getParameter("phone"));
+	pstmt.setString(3, request.getParameter("address"));
+	pstmt.setString(4, request.getParameter("joindate"));
+	pstmt.setString(5, request.getParameter("grade"));
+	pstmt.setString(6, request.getParameter("city"));
+	pstmt.setString(7, request.getParameter("custno"));
+	pstmt.executeUpdate();
+%>
+<script>
+	alert("회원정보수정이 완료되었습니다.");
+</script>
+
+
+
+
+
+11.
+회원등록화면
+[join.jsp]
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ include file="dbConnection.jsp"%>
+<!--회원 등록 화면 -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="resources/css/common.css" />
+<%
+	/*2.회원번호는 자동 생성 마지막 번호 +1이므로 member_tbl_02테이블에서 미자막 번호 가져온다.*/
+	sql = "SELECT max(custno) from member_tbl_02";
+	ResultSet res = conn.prepareStatement(sql).executeQuery();
+	int custno = 10001;
+	if (res.next())
+		custno = res.getInt(1) + 1;
+%>
+<script>
+	//3-4 모든항목에 대해서 유효성 체크를 실시하며 유효성 체크에서 통과하지 못하면 각 항목별 알람창 화면이 나타난다.
+	function validation() {
+		var custno = document.joinForm.custno;
+		var custname = document.joinForm.custname;
+		var phone = document.joinForm.phone;
+		var address = document.joinForm.address;
+		var joindate = document.joinForm.joindate;
+		var grade = document.joinForm.grade;
+		var city = document.joinForm.city;
+
+		if (custno.value.length != 6) {
+			alert("회원번호가 정확하지않습니다.");
+			custno.focus();
+		} else if (custname.value.length == 0) {
+			alert("회원성명이 입력되지 않았습니다.");
+			custname.focus();
+		} else if (phone.value.length == 0) {
+			alert("회원전화가 입력되지 않았습니다.");
+			phone.focus();
+		} else if (address.value.length == 0) {
+			alert("회원주소가 입력되지 않았습니다.");
+			address.focus();
+		} else if (joindate.value.length == 0 || joindate.value.length != 8) {
+			alert("가일일자가 정확하지 않습니다. 8자리를 입력하세요.");
+			joindate.focus();
+		} else if (grade.value.length != 1
+				|| !(grade.value == 'A' || grade.value == 'B' || grade.value == 'C')) {
+			alert("고객등급이 정확하지 않습니다.A,B,C중 하나만 적으세요.");
+			grade.focus();
+		} else if (city.value.length == 0) {
+			alert("도시코드가 입력되지 않았습니다.");
+			city.focus();
+		} else {
+			document.joinForm.submit();
+		}
+	}
+</script>
+</head>
+<body>
+	<%@ include file="header.jsp" %>
+	<section>
+		<h2>홈쇼핑 회원 등록</h2>
+		<iframe name="frm" style="display: none;"></iframe>
+		<form action="./actionInsert.jsp" method="post" name="joinForm" target="frm">
+			<table>
+				<colgroup>
+					<col width="30%">
+					<col width="70%">
+				</colgroup>
+				<tr>
+					<th>회원번호(자동발생)</th>
+					<td><input type="text" name="custno" 
+						value="<%=custno%>" readonly></td>
+				</tr>
+				<tr>
+					<th>회원성명</th>
+					<td><input type="text" name="custname" maxlength="20"></td>
+				</tr>
+				<tr>
+					<th>회원전화</th>
+					<td><input type="text" name="phone" maxlength="13"></td>
+				</tr>
+				<tr>
+					<th>회원주소</th>
+					<td><input type="text" name="address" maxlength="40"></td>
+				</tr>
+				<tr>
+					<th>가입일자</th>
+					<td><input type="text" name="joindate" maxlength="8"></td>
+				</tr>
+				<tr>
+					<th>고객등급 <br>(A:VIP, B:일반, C:직원)
+					</th>
+					<td><input type="text" name="grade" maxlength="1"></td>
+				</tr>
+				<tr>
+					<th>도시코드</th>
+					<td><input type="text" name="city" maxlength="20"></td>
+				</tr>
+				<tr style="text-align: center">
+					<td colspan="2">
+						<button type="button" onclick="validation()">등록</button>
+						<button type="button" onclick="location.href='./list.jsp'">조회</button>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</section>
+	<%@ include file="footer.jsp" %>
+</body>
+</html>
+
+
+
+
+
+12.
+회원등록버튼시 validation함수 실행후 else문에서 document.joinForm.submit()실행될때 연결되는 actionInsert.jsp화면
+[actionInsert.jsp]
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*" %>
+<%@ include file="dbConnection.jsp" %>
+<!--회원등록처리-->
+<%
+	sql = "INSERT INTO member_tbl_02 values(member_seq.nextval, ?, ?, ?, ?, ?, ?)";
+	PreparedStatement pstmt = conn.prepareStatement(sql);
+	pstmt.setString(1, request.getParameter("custname"));
+	pstmt.setString(2, request.getParameter("phone"));
+	pstmt.setString(3, request.getParameter("address"));
+	pstmt.setString(4, request.getParameter("joindate"));
+	pstmt.setString(5, request.getParameter("grade")); 
+	pstmt.setString(6, request.getParameter("city"));
+	pstmt.executeUpdate();
+%>
+<script>
+	alert("회원등록이 완료되었습니다.");
+</script>
+
+
+
+
+
+13.
+회원매출조회 화면
+[money.jsp]
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ include file="dbConnection.jsp"%>
+<!--회원 매출 조회 화면-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="resources/css/common.css" />
+</head>
+<body>
+	<%@ include file="header.jsp" %>
+	<section>
+		<h2>회원 매출 조회</h2>
+		<form>
+			<table>
+				<colgroup>
+					<col width="25%">
+					<col width="25%">
+					<col width="25%">
+					<col width="25%">
+				</colgroup>
+				<thead>
+					<tr>
+						<th>회원번호</th>
+						<th>회원성명</th>
+						<th>고객등급</th>
+						<th>매출</th>
+					</tr>
+				</thead>
+				<tbody>
+					<%
+						sql = "SELECT a.custno, a.custname, a.grade AS grade, sum(b.price) as price ";
+						sql += "FROM member_tbl_02 a ";
+						sql += "JOIN money_tbl_02 b on a.custno = b.custno ";
+						sql += "group by a.custno, a.custname, a.grade ";
+						sql += "order by price desc";
+						ResultSet res = conn.prepareStatement(sql).executeQuery();
+
+						//쿼리문 수정 가능 
+						//a.grade >> DECODE(mb.grade, 'A', 'VIP', 'B', '일반', '직원') 이렇게 주면 java에서 grade를 수정할 필요x
+						String custno, custname, grade, price;
+						while (res.next()) {
+							custno = res.getString("custno");
+							custname = res.getString("custname");
+							grade = res.getString("grade");
+							price = res.getString("price");
+
+							if("A".equals(grade)){
+								grade = "VIP";
+							}else if("B".equals(grade)){
+								grade = "일반";
+							}else{
+								grade = "직원";
+							}
+					%>
+					<tr style="text-align: center;">
+						<td><%=custno%></td>
+						<td><%=custname%></td>
+						<td><%=grade%></td>
+						<td><%=price%></td>
+					</tr>
+					<%
+						}
+					%>
+				</tbody>
+			</table>
+		</form>
+	</section>
+	<%@ include file="footer.jsp" %>
+</body>
+</html>

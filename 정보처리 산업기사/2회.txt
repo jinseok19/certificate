@@ -1,0 +1,736 @@
+메인화면
+
+--index--
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>index</title>
+</head>
+<body>
+	<jsp:include page="header.jsp"></jsp:include>
+	
+	<div style="min-height: 500px;">
+		<h1 align="center">과정평가형 자격 CBQ</h1>
+		
+		<pre>
+국가직무능력표준(NCS:National Competency Standards)으로 설계된 교육·훈련과정을 충실히 이수한 후, 내부·외부 평가를 거쳐 일정 합격 기준을
+충족하는 교육·훈련생에게 국가기술자격을 부여하는 제도
+<p style="font-weight: bold;">산업현장의 중심의 교육평가로 더 커지는 능력!</p>
+<p style="font-weight: bold;">알고 있는 것에 할 수 있는 것을 더하는</p>
+<p style="font-weight: bold;">과정평가형 자격은</p>
+<p style="font-weight: bold;">현장 중심형 인재육성을 지원 합니다.</p>
+		
+		</pre>
+	</div>
+	
+	<jsp:include page="footer.jsp"></jsp:include>
+</body>
+</html>
+
+--header--
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>header</title>
+</head>
+<body>
+	<div style="background: gray;">
+		<h1 align="center">(과정평가형 정보처리산업기사) 학생회장투표 프로그램 ver 2021-10</h1>
+	</div>
+	
+	<div style="background: silver;">
+		<br>
+		&emsp;&emsp;&emsp;<a href="votelist.jsp">후보조회</a>
+		&emsp;&emsp;&emsp;<a href="vote.jsp">후보등록</a>
+		&emsp;&emsp;&emsp;<a href="vote2.jsp">투표하기</a>
+		&emsp;&emsp;&emsp;<a href="votelist2.jsp">투표결과조회</a>
+		&emsp;&emsp;&emsp;<a href="rank.jsp">후보자순위</a>
+		&emsp;&emsp;&emsp;<a href="index.jsp">홈으로</a>
+	</div>
+</body>
+</html>
+
+--footer--
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>footer</title>
+</head>
+<body>
+	<div style="background: gray;">
+		<h3 align="center">HRDKOREA Copyrightⓒ2021 All rights reserved. Human Resources Development Service of Korea</h3>
+	</div>
+</body>
+</html>
+
+----------------------------------------------------------------------------------------------------------------------
+
+후보조회
+
+--vote_register--
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>후보등록</title>
+</head>
+<script language="javascript">
+function valid_check() {
+	if(document.frm1.no.value == "")
+	{
+		alert("후보번호를 입력하여 주시기 바랍니다.");
+		document.frm1.no.focus();
+		return false;
+	}
+	if(document.frm1.name.value == "")
+	{
+		alert("이름을 입력하여 주시기 바랍니다.");
+		document.frm1.name.focus();
+		return false;
+	}
+	if(!isNaN(document.frm1.name.value.substr(0,1)))
+	{
+		alert("이름은 숫자로 시작할 수 없습니다.");
+		document.frm1.name.focus();
+		return false;
+	}
+	if(document.frm1.code.value == "")
+	{
+		alert("팀번호를 선택하여 주시기 바랍니다.");
+		document.frm1.code.focus();
+		return false;
+	}
+	if(document.frm1.school.value == "")
+	{
+		alert("학력을 선택하여 주시기 바랍니다.");
+		document.frm1.school.focus();
+		return false;
+	}
+	if(document.frm1.jumin1.value.length != 6)
+	{
+		alert("주민번호 앞자리 6자리를 입력하여 주시기 바랍니다.");
+		document.frm1.jumin1.focus();
+		return false;
+	}
+	if(document.frm1.jumin2.value.length != 7)
+	{
+		alert("주민번호 뒷자리 7자리를 입력하여 주시기 바랍니다.");
+		document.frm1.jumin2.focus();
+		return false;
+	}
+	if(document.frm1.major.value == "")
+	{
+		alert("전공학년반을 입력하여 주시기 바랍니다.");
+		document.frm1.major.focus();
+		return false;
+	}
+	
+	document.frm1.submit();
+}
+</script>
+<body>
+<h3>후보등록</h3>
+<form name="frm1" action="vote_join_ok.jsp" method="post">
+<table border="1" cellpadding="0" cellspacing="0" width="500">
+<tr>
+<td width="40%" align="left">후보번호</td>
+<td width="60%" align="left">
+<input type="text" size="3" maxlength="1" name="no"></td></tr>
+<tr>
+<td width="40%" align="left">이름</td>
+<td width="60%" align="left">
+<input type="text" size="15" maxlength="5" name="name"></td></tr>
+<tr>
+<td width="40%" align="left">팀번호</td>
+<td width="60%" align="left">
+<select name="code">
+<option value="">==팀번호를 선택하세요==</option>
+<option value="1">1팀</option>
+<option value="2">2팀</option>
+<option value="3">3팀</option>
+<option value="4">4팀</option>
+<option value="5">5팀</option>
+</select></td></tr>
+<tr>
+<td width="40%" align="left">후보번호</td>
+<td width="60%" align="left">
+<select name="school">
+<option value="">==학력을 선택하세요==</option>
+<option value="1">중졸</option>
+<option value="2">고졸</option>
+<option value="3">전문대졸</option>
+<option value="4">대졸</option>
+<option value="5">석사수료</option>
+<option value="6">석사취득</option>
+<option value="7">박사수료</option>
+<option value="8">박사취득</option>
+</select></td></tr>
+<tr>
+<td width="40%" align="left">주민번호</td>
+<td width="60%" align="left">
+<input type="text" size="6" maxlength="6" name="jumin1">
+<input type="text" size="7" maxlength="7" name="jumin2"></td></tr>
+<tr>
+<td width="40%" align="left">전공학년반</td>
+<td width="60%" align="left">
+<input type="text" size="15" maxlength="10" name="major"></td></tr>
+<tr>
+<td width="100%" align="center" colspan="2">
+<input type="button" value="등록" onclick="valid_check()"></td></tr>
+</table>
+</form>
+</body>
+&emsp;&emsp;&emsp;<a href="index.jsp">홈으로</a>
+</html>
+
+--vote_join_ok.jsp--
+
+<%@ page import="java.sql.*" %>
+<%@ page import="java.util.*" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<% request.setCharacterEncoding("utf-8"); %>
+<%
+	Class.forName("oracle.jdbc.OracleDriver");
+
+	Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "system", "1234");
+	
+	PreparedStatement pstmt = null;
+	
+	String no = request.getParameter("no");
+	String name = request.getParameter("name");
+	String code = request.getParameter("code");
+	String school = request.getParameter("school");
+	String jumin = request.getParameter("jumin1") + request.getParameter("jumin2");
+	String major = request.getParameter("major");
+	
+	String sql = " insert into tbl_register values(?,?,?,?,?,?) ";
+	
+	pstmt = con.prepareStatement(sql);
+
+	pstmt.setString(1, no);
+	pstmt.setString(2, name);
+	pstmt.setString(3, code);
+	pstmt.setString(4, school);
+	pstmt.setString(5, jumin);
+	pstmt.setString(6, major);
+	
+	pstmt.executeUpdate();
+	
+	pstmt.close();
+	con.close();
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+가입이 완료되었습니다.
+<br>
+</body>
+&emsp;&emsp;&emsp;<a href="index.jsp">홈으로</a>
+</html>
+
+----------------------------------------------------------------------------------------------------------------------
+
+후보조회
+
+--show_register.jsp--
+
+<%@ page import="java.sql.*" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<% request.setCharacterEncoding("utf-8"); %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>후보조회</title>
+</head>
+<body>
+<table border="1">
+<tr>
+<td>후보번호</td>
+<td>성명</td>
+<td>반</td>
+<td>파트너</td>
+<td>학력</td>
+<td>주민번호</td>
+<td>전공학년반</td>
+<td>대표전화</td>
+</tr>
+<%
+	Class.forName("oracle.jdbc.OracleDriver");
+
+	Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system", "1234");
+	
+	String sql = " select tr.no, tr.name, tp.p_class, tp.p_partner, tr.school, tr.jumin, tr.major, tp.p_tel1, tp.p_tel2, tp.p_tel3 " + " from tbl_register tr " + " join tbl_partner tp " + " on tr.code = tp.p_code ";
+	
+	Statement stmt = con.createStatement();
+	ResultSet rs = stmt.executeQuery(sql);
+	
+	while(rs.next()) {
+		String no = rs.getString("no");
+		String name = rs.getString("name");
+		String p_class = rs.getString("p_class");
+		String p_partner = rs.getString("p_partner");
+		String school = rs.getString("school");
+		switch(school){
+		case "1":
+			school = "중졸";
+			break;
+		case "2":
+			school = "고졸";
+			break;
+		case "3":
+			school = "전문대졸";
+			break;
+		case "4":
+			school = "대졸";
+			break;
+		case "5":
+			school = "석사수료";
+			break;
+		case "6":
+			school = "석사취득";
+			break;
+		case "7":
+			school = "박사수료";
+			break;
+		case "8":
+			school = "박사취득";
+			break;
+		}
+		
+		String jumin1 = rs.getString("jumin").substring(0,6);
+		String jumin2 = rs.getString("jumin").substring(6,13);
+		String major = rs.getString("major");
+		
+		String tel1 = rs.getString("p_tel1");
+		String tel2 = rs.getString("p_tel2");
+		String tel3 = rs.getString("p_tel3");
+%>
+<tr>
+<td><%= no %></td>
+<td><%= name %></td>
+<td><%= p_class %></td>
+<td><%= p_partner %></td>
+<td><%= school %></td>
+<td><%= jumin1 %>-<%= jumin2 %></td>
+<td><%= major %></td>
+<td><%= tel1 %>-<%= tel2 %>-<%= tel3 %></td>
+</tr>
+<%
+	}
+%>
+</table>
+</body>
+&emsp;&emsp;&emsp;<a href="index.jsp">홈으로</a>
+</html>
+
+----------------------------------------------------------------------------------------------------------------------
+
+투표하기
+
+--vote.jsp--
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>투표하기</title>
+</head>
+<script language="javascript">
+function valid_check1() {
+	if(document.frm2.jumin.value.length != 13)
+	{
+		alert("주민번호 13자리를 입력하여 주시기 바랍니다.");
+		document.frm2.jumin.focus();
+		return false;
+	}
+	if(document.frm2.name.value == "")
+	{
+		alert("이름을 입력하여 주시기 바랍니다.");
+		document.frm2.name.focus();
+		return false;
+	}
+	if(document.frm2.code.value == "")
+	{
+		alert("후보번호를 선택하여 주시기 바랍니다.");
+		document.frm2.code.focus();
+		return false;
+	}
+	if(document.frm2.time.value == "")
+	{
+		alert("투표시간을 입력하여 주시기 바랍니다.");
+		document.frm2.time.focus();
+		return false;
+	}
+	if(document.frm2.rotation.value == "")
+	{
+		alert("투표장소를 입력하여 주시기 바랍니다.");
+		document.frm2.rotation.focus();
+		return false;
+	}
+	if(document.frm2.check[0].checked == false && document.frm2.check[1].checked == false)
+	{
+		alert("유권자확인을 선택하여 주시기 바랍니다.");
+		document.frm2.check.focus();
+		return false;
+	}
+	document.frm2.submit();
+}
+function valid_check2() {
+	alert("데이터가 삭제되었습니다.");
+	document.frm2.reset();
+}
+</script>
+<body>
+<h2>투표하기</h2>
+<form name="frm2" action="vote_action.jsp" method="post">
+<table border="1">
+<tr>
+<td width="40%" align="center">주민번호</td>
+<td width="60%" align="left">
+<input type="text" size="15" maxlength="13" name="jumin">예(0403013000001</td></tr>
+<tr>
+<td width="40%" align="center">성명</td>
+<td width="60%" align="left">
+<input type="text" size="15" maxlength="10" name="name"></td></tr>
+<tr>
+<td width="40%" align="center">후보번호</td>
+<td width="60%" align="left">
+<select name="code">
+<option value="">==후보번호 선택==</option>
+<option value="1">[1] 강감찬</option>
+<option value="2">[2] 유관순</option>
+<option value="3">[3] 이율곡</option>
+<option value="4">[4] 이순신</option>
+<option value="5">[5] 김연아</option>
+</select></td></tr>
+<tr>
+<td width="40%" align="center">투표시간</td>
+<td width="60%" align="left">
+<input type="text" size="15" maxlength="4" name="time"></td></tr>
+<tr>
+<td width="40%" align="center">투표장소</td>
+<td width="60%" align="left">
+<input type="text" size="15" maxlength="10" name="rotation"></td></tr>
+<tr>
+<td width="40%" align="center">유권자확인</td>
+<td width="60%" align="left">
+<input type="radio" value="Y" name="check">확인
+<input type="radio" value="N" name="check">미확인</td></tr>
+<tr>
+<td width="100%" align="center" colspan="2">
+<input type="button" value="투표하기" onclick="valid_check1()">
+<input type="button" value="다시쓰기" onclick="valid_check2()"></td></tr>
+</table>
+</form>
+</body>
+&emsp;&emsp;&emsp;<a href="index.jsp">홈으로</a>
+</html>
+
+--vote_action.jsp--
+
+<%@ page import="java.sql.*" %>
+<%@ page import="java.util.*" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<% request.setCharacterEncoding("utf-8"); %>
+<%
+	Class.forName("oracle.jdbc.OracleDriver");
+
+	Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system", "1234");
+	
+	PreparedStatement pstmt = null;
+	
+	String jumin = request.getParameter("jumin");
+	String name = request.getParameter("name");
+	String code = request.getParameter("code");
+	String time = request.getParameter("time");
+	String rotation = request.getParameter("rotation");
+	String check = request.getParameter("check");
+	
+	String sql = " insert into tbl_vote values(?,?,?,?,?,?) ";
+	
+	pstmt = con.prepareStatement(sql);
+	
+	pstmt.setString(1, jumin);
+	pstmt.setString(2, name);
+	pstmt.setString(3, code);
+	pstmt.setString(4, time);
+	pstmt.setString(5, rotation);
+	pstmt.setString(6, check);
+	
+	pstmt.executeUpdate();
+	
+	pstmt.close();
+	con.close();
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+가입이 완료되었습니다.
+<br>
+</body>
+&emsp;&emsp;&emsp;<a href="index.jsp">홈으로</a>
+</html>
+
+----------------------------------------------------------------------------------------------------------------------
+
+투표결과조회
+
+--show_vote.jsp--
+
+<%@ page import="java.sql.*" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<% request.setCharacterEncoding("utf-8"); %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>투표결과조회</title>
+</head>
+<body>
+<h2>투표결과조회</h2>
+<table border="1">
+<tr>
+<td>이름</td>
+<td>생년월일</td>
+<td>성별</td>
+<td>후보번호</td>
+<td>투표시간</td>
+<td>유권자확인</td>
+</tr>
+<%
+	Class.forName("oracle.jdbc.OracleDriver");
+
+	Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system", "1234");
+	
+	String sql = " select g_name, g_jumin, g_code, g_time, g_check from tbl_vote ";
+	
+	Statement stmt = con.createStatement();
+	ResultSet rs = stmt.executeQuery(sql);
+	
+	while(rs.next()) {
+		String name = rs.getString("g_name");
+		String jumin = "";
+		String jumin1 = rs.getString("g_jumin").substring(0,2);
+		String jumin2 = rs.getString("g_jumin").substring(2,4);
+		String jumin3 = rs.getString("g_jumin").substring(4,6);
+		String jumin_check = rs.getString("g_jumin").substring(6,7);
+		String gender = "";
+		
+		switch(jumin_check) {
+		case "1":
+			gender = "남";
+			jumin = "19";
+			break;
+		case "2":
+			gender = "여";
+			jumin = "19";
+			break;
+		case "3":
+			gender = "남";
+			jumin = "20";
+			break;
+		case "4":
+			gender = "여";
+			jumin = "20";
+			break;
+		}
+		
+		String code = rs.getString("g_code");
+		String time1 = rs.getString("g_time").substring(0,2);
+		String time2 = rs.getString("g_time").substring(2,4);
+		
+		String check = rs.getString("g_check");
+		switch(check) {
+		case "Y":
+			check = "확인";
+			break;
+		case "N":
+			check = "미확인";
+			break;
+		}
+%>
+<tr>
+<td><%= name %></td>
+<td><%= jumin %><%= jumin1 %>년<%= jumin2 %>월<%= jumin3 %>일생</td>
+<td><%= gender %></td>
+<td><%= code %></td>
+<td><%= time1 %>:<%= time2 %></td>
+<td><%= check %></td>
+</tr>
+<%
+	}
+	
+	rs.close();
+	stmt.close();
+	con.close();
+%>
+</table>
+</body>
+&emsp;&emsp;&emsp;<a href="index.jsp">홈으로</a>
+</html>
+
+----------------------------------------------------------------------------------------------------------------------
+
+후보자등수
+
+--show_rank.jsp--
+
+<%@ page import="java.sql.*" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<% request.setCharacterEncoding("utf-8"); %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>후보자등수</title>
+</head>
+<body>
+<h2>후보자등수</h2>
+<table border="1">
+<tr>
+<td>후보번호</td>
+<td>성명</td>
+<td>총득표수</td>
+</tr>
+<%
+	Class.forName("oracle.jdbc.OracleDriver");
+
+	Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system", "1234");
+	
+	String sql = " select tr.no, tr.name, count(gu.g_code) as total " + " from tbl_register tr " + " left outer join tbl_vote gu " + " on tr.no = gu.g_code " + " group by tr.no, tr.name " + " order by total desc ";
+	
+	Statement stmt = con.createStatement();
+	
+	ResultSet rs = stmt.executeQuery(sql);
+	
+	while(rs.next()) {
+		String code = rs.getString("no");
+		String name = rs.getString("name");
+		String total = rs.getString("total");
+%>
+<tr>
+<td><%= code %></td>
+<td><%= name %></td>
+<td><%= total %></td>
+</tr>
+<%
+	}
+	
+	rs.close();
+	stmt.close();
+	con.close();
+%>
+</table>
+</body>
+&emsp;&emsp;&emsp;<a href="index.jsp">홈으로</a>
+</html>
+
+----------------------------------------------------------------------------------------------------------------------
+
+--테이블, 테이블 값--
+
+create table tbl_register(
+no char(1) primary key,
+name varchar2(20) not null,
+code char(2),
+school char(1),
+jumin char(13),
+major varchar2(20)
+);
+
+drop table tbl_register;
+
+insert into tbl_register values('1', '강감찬', 'P1', '1', '0403153111111', '전기3-1');
+insert into tbl_register values('2', '유관순', 'P2', '3', '0405084222222', '디자인3-4');
+insert into tbl_register values('3', '이율곡', 'P3', '2', '0408243333333', '전자3-6');
+insert into tbl_register values('4', '이순신', 'P4', '4', '0410023444444', '자동차3-7');
+insert into tbl_register values('5', '김연아', 'P5', '4', '0411054555555', '건축3-9');
+
+create table tbl_partner(
+p_code char(2) primary key,
+p_class varchar2(10),
+p_rdate date,
+p_partner varchar2(20) not null,
+p_tel1 char(3),
+p_tel2 char(4),
+p_tel3 char(4)
+);
+
+insert into tbl_partner values('P1', '1반', '2021-06-01', '김명희', '010', '1111', '1111');
+insert into tbl_partner values('P2', '4반', '2021-06-01', '김선희', '010', '2222', '2222');
+insert into tbl_partner values('P3', '6반', '2021-06-01', '이명석', '010', '3333', '3333');
+insert into tbl_partner values('P4', '7반', '2021-06-02', '서한솔', '010', '4444', '4444');
+insert into tbl_partner values('P5', '9반', '2021-06-02', '정미경', '010', '5555', '5555');
+
+drop table tbl_partner;
+
+create table tbl_vote(
+g_jumin char(13),
+g_name varchar2(20),
+g_code char(1),
+g_time char(4),
+g_rotation varchar2(30),
+g_check char(1)
+);
+
+insert into tbl_vote values('0301013000001', '김길동', '1', '0930', '제1투표소', 'N');
+insert into tbl_vote values('0301014000002', '이미희', '2', '0930', '제1투표소', 'N');
+insert into tbl_vote values('0401013000003', '박한길', '3', '0940', '제1투표소', 'Y');
+insert into tbl_vote values('0401014000004', '홍미화', '4', '0940', '제1투표소', 'Y');
+insert into tbl_vote values('0301013000005', '조민규', '5', '0950', '제1투표소', 'Y');
+insert into tbl_vote values('0403014000006', '최미자', '4', '0950', '제1투표소', 'Y');
+insert into tbl_vote values('0504013000007', '지창호', '1', '1000', '제1투표소', 'Y');
+insert into tbl_vote values('0501014000008', '장미라', '3', '1000', '제1투표소', 'Y');
+insert into tbl_vote values('0501013000009', '정문호', '3', '1030', '제1투표소', 'Y');
+insert into tbl_vote values('0401014000010', '강찬희', '4', '1030', '제1투표소', 'Y');
+insert into tbl_vote values('0301013000011', '신진규', '2', '1100', '제2투표소', 'Y');
+insert into tbl_vote values('0401014000012', '오원희', '1', '1100', '제2투표소', 'Y');
+insert into tbl_vote values('0401013000013', '현명석', '4', '1130', '제2투표소', 'Y');
+insert into tbl_vote values('0301014000014', '왕진희', '2', '1130', '제2투표소', 'Y');
+insert into tbl_vote values('0301013000015', '유명환', '3', '1200', '제2투표소', 'Y');
+insert into tbl_vote values('0401014000016', '한국인', '2', '1200', '제2투표소', 'Y');
+insert into tbl_vote values('0501013000017', '문무생', '1', '1300', '제2투표소', 'Y');
+insert into tbl_vote values('0301014000018', '양귀비', '1', '1300', '제2투표소', 'Y');
+insert into tbl_vote values('0301013000019', '구본길', '4', '1330', '제2투표소', 'Y');
+insert into tbl_vote values('0401014000021', '진보라', '5', '1330', '제2투표소', 'Y');
+insert into tbl_vote values('0401054000022', '한유진', '5', '1200', '제2투표소', 'Y');
+
+drop table tbl_vote;
+
+commit;
+
+select * from tbl_register;
+select * from tbl_partner;
+select * from tbl_vote;

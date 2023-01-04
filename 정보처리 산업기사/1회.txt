@@ -1,0 +1,548 @@
+테이블(SQL)
+
+create table tbl_guest(
+userid char(15),
+usernm varchar2(20) not null,
+passwd char(10),
+jumin char(13),
+gender char(1),
+address varchar2(50),
+jobcd number(1),
+mailrcv char(1),
+intro varchar2(50),
+primary key(userid)
+);
+
+insert into tbl_guest values ('seojm', '서정만', 's123!!', '7003211157222', '1', '평택시 삼남로 283', 3, 'Y', '한국복지대학 교수');
+insert into tbl_guest values ('kks', '김규성', 'k345!!', '6805011311111', '1', '수원시 영통구 그린아파트', 2, 'Y', '삼성전자 부장');
+insert into tbl_guest values ('shm', '손흥민', 's678!!', '920401123222', '1', '서울시 여의도동 23', 2, 'Y', '토트넘 FC 선수');
+insert into tbl_guest values ('kds', '김다솔', 'k222!!', '0202213111222', '2', '수원시 영통구 111', 1, 'Y', '수원공고 학생');
+insert into tbl_guest values ('khk', '김연경', 'k007!!', '970502231111', '2', '청주시 향군로 108', 4, 'Y', '육군 중위');
+
+----- main.jsp ------
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+	<jsp:include page = "header.jsp"></jsp:include>
+	
+	<div style = "min-height: 500px;">
+	<h1 align = "center">과정평가형 자격 CBQ</h1>
+	<pre>
+국가직무능력표준(NCS:National Competency Standards)으로 설계된 교육 ' 훈련과정을 충실히 이수한 후, 내부 ' 외부 평가를 거쳐 일정 합격 기준을 충
+족하는 교육 ' 훈련생에게 국가기술자격을 부여하는 제도
+	
+	<p><b>산업현장 중심의 교육평가로 더 커지는 능력!</b></p>
+	<p><b>알고 있는 것에 할 수 있는 것을 더하는</b></p>
+	<p><b>교육평가형 자격은</b></p>
+	<p><b>현장 중심형 인재육성을 지원 합니다.</b></p>
+	</pre>
+	</div>
+	
+	<jsp:include page = "footer.jsp"></jsp:include>
+</body>
+</html>
+
+--------- header.jsp ----------
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+	<div style = "background-color: gray;">
+	<h1 align = "center">(과정평가형 정보처리산업기사) 회원관리 프로그램 ver 2021-09</h1>
+	</div>
+	<div style = "background-color: silver;">
+	<br>
+	&emsp;&emsp;&emsp;<a href = "guest_join.jsp">회원가입</a>
+	&emsp;&emsp;&emsp;<a href = "guest_list.jsp">회원목록</a>
+	&emsp;&emsp;&emsp;<a href = "guest_search">회원검색</a>
+	&emsp;&emsp;&emsp;<a href = "main.jsp">홈으로</a>
+	</div>
+
+</body>
+</html>
+
+
+-------- footer.jsp ----------
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+	<div style = "background-color: gray;">
+	<h3 align = "center">HRDKOREA Copyrightⓒ2021 All rights reserved. Human Resources Development Service of Korea</h3>
+	</div>
+
+</body>
+</html>
+
+---------- guest_join.jsp -------------
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+
+	<script type = "text/javascript">
+	function valid_check()
+	{
+		if(document.frm1.userid.value == "")
+			{
+			alert("아이디를 입력해 주세요.");
+			document.frm1.userid.focus();
+			return false;
+			}
+		
+		if(document.frm1.userid.value.length < 4 || document.frm1.userid.value.length > 12)
+			{
+			alert("아이디는 4자~12자 이내 입니다.");
+			document.frm1.userid.focus();
+			return false;
+			}
+		
+		if(document.frm1.usernm.value == "")
+			{
+			alert("이름을 입력해 주세요.");
+			document.frm1.usernm.focus();
+			return false;
+			}
+		
+		if(!isNaN(document.frm1.usernm.value.substring(0,1)))
+			{
+			alert("이름은 숫자로 시작 안돼요");
+			document.frm1.usernm.focus();
+			return false;
+			}
+		
+		if(document.frm1.passwd.value == "")
+			{
+			alert("비밀번호를 입력해 주세요.");
+			document.frm1.passwd.focus();
+			return false;
+			}
+		
+		if(document.frm1.passwd.value.length < 4)
+			{
+			alert("비밀번호는 4자 이상입니다.");
+			document.frm1.passwd.focus();
+			return false;
+			}
+		
+		if(document.frm1.passwd2.value == "")
+			{
+			alert("비밀번호를 확인해 주세요.");
+			document.frm1.passwd2.focus();
+			return false;
+			}
+		
+		if(document.frm1.passwd.value != document.frm1.passwd2.value)
+			{
+			alert("비밀번호가 일치하지 않습니다.");
+			document.frm1.passwd2.focus();
+			return false;
+			}
+		
+		if(document.frm1.jumin1.value.length != 6)
+			{
+			alert("주민번호 앞자리는 6자 입니다.");
+			document.frm1.jumin1.focus();
+			return false;
+			}
+		
+		if(document.frm1.jumin2.value.length != 7)
+			{
+			alert("주민번호 뒷자리는 7자 입니다.");
+			document.frm1.jumin2.focus();
+			return false;
+			}
+		
+		
+		if(document.frm1.address.value == "")
+			{
+			alert("주소 입력해 주세요.");
+			document.frm1.address.focus();
+			return false;
+			}
+		
+		if(document.frm1.jobcd.value == "")
+		{
+		alert("직업을 선택해 주세요.");
+		document.frm1.jobcd.focus();
+		return false;
+		}
+	
+		
+		if(document.frm1.intro.value == "")
+			{
+			alert("자기소개 입력해주세요.");
+			document.frm1.intro.focus();
+			return false;
+			}
+		
+		document.frm1.submit();
+	}
+	
+	
+	</script>
+
+<body>
+
+	<h2>회원가입</h2>
+	<form name = "frm1" action = "guest_join_ok.jsp" method = "post">
+	<table border = "1" width = "500" cellpadding = "0" cellspacing = "0">
+	
+	<tr>
+	<td width = "40%" align = "left">아이디</td>
+	<td width = "60%" align = "left">
+	<input type = "text" size = "15" maxlength = "12" name = "userid"></td></tr>
+	
+	<tr>
+	<td width = "40%" align = "left">이름</td>
+	<td width = "60%" align = "left">
+	<input type = "text" size = "15" maxlength = "12" name = "usernm"></td></tr>
+	
+	<tr>
+	<td width = "40%" align = "left">비밀번호</td>
+	<td width = "60%" align = "left">
+	<input type = "password" size = "15" maxlength = "12" name = "passwd"></td></tr>
+	
+	<tr>
+	<td width = "40%" align = "left">비밀번호확인</td>
+	<td width = "60%" align = "left">
+	<input type = "password" size = "15" maxlength = "12" name = "passwd2"></td></tr>
+	
+	<tr>
+	<td width = "40%" align = "left">주민번호</td>
+	<td width = "60%" align = "left">
+	<input type = "text" size = "6" maxlength = "6" name = "jumin1">
+	<input type = "text" size = "7" maxlength = "7" name = "jumin2"></td></tr>
+	
+	<tr>
+	<td width = "40%" align = "left">성별</td>
+	<td width = "60%" align = "left">
+	남<input type = "radio" name = "gender" value = "1">
+	여<input type = "radio" name = "gender" value = "2"></td></tr>
+	
+	<tr>
+	<td width = "40%" align = "left">주소</td>
+	<td width = "60%" align = "left">
+	<input type = "text" size = "30" maxlength = "50" name = "address"></td></tr>
+	
+	<tr>
+	<td width = "40%" align = "left">직업</td>
+	<td width = "60%" align = "left">
+	<select name = "jobcd">
+	<option value = "">==직업을 선택해주세요==</option>
+	<option value = "1">학생</option>
+	<option value = "2">회사원</option>
+	<option value = "3">군인</option>
+	<option value = "4">공무원</option>
+	<option value = "5">기타</option>	
+	</select></td></tr>
+	
+	<tr>
+	<td width = "40%" align = "left">메일수신여부</td>
+	<td width = "60%" align = "left">
+	동의함<input type = "checkbox" name = "mailrcv"></td></tr>
+	
+	<tr>
+	<td width = "40%" align = "left">자기소개</td>
+	<td width = "60%" align = "left">
+	<textarea rows = "5"  cols = "50" name = "intro"></textarea></td></tr>
+	
+	<tr>
+	<td width = "100%" align = "center" colspan = "2">
+	<input type = "button" value = "가입" onclick = "valid_check()"></td></tr>
+	
+	</table></form>
+
+</body>
+&emsp;&emsp;&emsp;<a href = "main.jsp">홈으로</a>
+</html>
+
+------------------ guest_join_ok.jsp ---------------
+
+<%@ page language="java" import = "java.sql.*" import = "java.util.*" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<% request.setCharacterEncoding("utf-8"); %>
+
+<%
+
+	Class.forName("oracle.jdbc.OracleDriver");
+	Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system", "1234");
+	
+	PreparedStatement pstmt = null;
+	
+	String suserid = request.getParameter("userid");
+	String susernm = request.getParameter("usernm");
+	String spasswd = request.getParameter("passwd");
+	String sjumin = request.getParameter("jumin1")+request.getParameter("jumin2");
+	String sgender = request.getParameter("gender");
+	String saddress = request.getParameter("address");
+	String sjobcd = request.getParameter("jobcd");
+	String smailrcv = request.getParameter("mailrcv");
+	if(smailrcv != null && smailrcv.equals("on"))
+		smailrcv = "Y";
+	else
+		smailrcv = "N";
+	String sintro = request.getParameter("intro");
+	
+	String SQL = "insert into tbl_guest values (?,?,?,?,?,?,?,?,?)";
+	
+	pstmt = con.prepareStatement(SQL);
+	
+	pstmt.setString(1, suserid);
+	pstmt.setString(2, susernm);
+	pstmt.setString(3, spasswd);
+	pstmt.setString(4, sjumin);
+	pstmt.setString(5, sgender);
+	pstmt.setString(6, saddress);
+	pstmt.setString(7, sjobcd);
+	pstmt.setString(8, smailrcv);
+	pstmt.setString(9, sintro);
+	
+	pstmt.executeUpdate();
+	pstmt.close();
+	con.close();
+
+	
+%>
+가입 완료
+
+
+------------------ guest_list.jsp ------------------
+
+<%@ page language="java" import = "java.sql.*" import = "java.util.*" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+	<h2>회원 목록</h2>
+	<table border = "1" width = "600" cellpadding = "0" cellspacing = "0">
+	
+	<tr bgcolor = "ccccc">
+	<th>회원ID</th>
+	<th>회원명</th>
+	<th>생년월일</th>
+	<th>성별</th>
+	<th>직업</th>
+	<th>자기소개</th>
+	</tr>
+	
+	<%
+	
+	Class.forName("oracle.jdbc.OracleDriver");
+	Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system", "1234");
+	
+	Statement stmt = con.createStatement();
+	
+	String sql = "select userid, usernm, jumin, gender, jobcd, intro from tbl_guest";
+	
+	ResultSet rs = stmt.executeQuery(sql);
+	
+	while(rs.next())
+	{
+		String userid = rs.getString("userid");
+		String usernm = rs.getString("usernm");
+		String jumin = rs.getString("jumin");
+		String jumin1 = jumin.substring(0,6);
+		
+		String gender = rs.getString("gender");
+		if(gender.equals("1"))
+			gender = "남";
+		else if(gender.equals("2"))
+			gender = "여";
+		else
+			gender = "";
+		
+		String jobcd = rs.getString("jobcd");
+		switch(jobcd)
+		{
+		case "1" :
+			jobcd = "학생";
+			break;
+		case "2" :
+			jobcd = "회사원";
+			break;
+		case "3" :
+			jobcd = "군인";
+			break;
+		case "4" :
+			jobcd = "공무원";
+			break;
+		case "5" :
+			jobcd = "기타";
+			break;
+		}
+		
+		String intro = rs.getString("intro");
+	%>
+	
+	<tr>
+	<td><%= userid %></td>
+	<td><%= usernm %></td>
+	<td><%= jumin1 %></td>
+	<td><%= gender %></td>
+	<td><%= jobcd %></td>
+	<td><%= intro %></td>
+	</tr>
+	
+	<%
+	}
+	rs.close();
+	con.close();
+	stmt.close();
+	
+	%>
+	
+	</table>
+
+</body>
+&emsp;&emsp;&emsp;<a href = "main.jsp">홈으로</a>
+</html>
+
+------------------ guest_search.jsp -------------------
+
+<%@ page language="java" import = "java.sql.*" import = "java.util.*" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<% request.setCharacterEncoding("utf-8"); %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<%
+String search_key = request.getParameter("search_key");
+String search_value = request.getParameter("search_value");
+if(search_key == null) search_key = "";
+if(search_value == null) search_value = "";
+%>
+<body>
+
+	<h2>회원 목록</h2>
+	<form name = "frm" action = "guest_search.jsp" method = "post">
+	검색조건 : 
+	<select name = "search_key">
+	<option value = "name">회원이름</option>
+	<option value = "id">회원ID</option>
+	</select>
+	<input type = "text" size = "15" name = "search_value" value = "<%= search_value %>">
+	<input type = "submit" value = "검색">	
+	</form>
+	<table border = "1" width = "600">
+	
+	<tr bgcolor = "ccccc">
+	<th>회원ID</th>
+	<th>회원명</th>
+	<th>생년월일</th>
+	<th>성별</th>
+	<th>직업</th>
+	<th>자기소개</th>
+	</tr>
+	
+	<%
+	
+	Class.forName("oracle.jdbc.OracleDriver");
+	Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system", "1234");
+	
+	Statement stmt = con.createStatement();
+	
+	String sql = "select userid, usernm, jumin, gender, jobcd, intro from tbl_guest";
+	
+	if(search_key.equals("name"))
+		sql = sql + " where usernm like '%" + search_value + "%'";
+	else if(search_key.equals("id"))
+		sql = sql + " where userid = '" + search_value + "'";
+	
+	ResultSet rs = stmt.executeQuery(sql);
+	
+	while(rs.next())
+	{
+		String userid = rs.getString("userid");
+		String usernm = rs.getString("usernm");
+		String jumin = rs.getString("jumin");
+		String jumin1 = jumin.substring(0,6);
+		
+		String gender = rs.getString("gender");
+		if(gender.equals("1"))
+			gender = "남";
+		else if(gender.equals("2"))
+			gender = "여";
+		else
+			gender = "";
+		
+		String jobcd = rs.getString("jobcd");
+		switch(jobcd)
+		{
+		case "1" :
+			jobcd = "학생";
+			break;
+		case "2" :
+			jobcd = "회사원";
+			break;
+		case "3" :
+			jobcd = "군인";
+			break;
+		case "4" :
+			jobcd = "공무원";
+			break;
+		case "5"
+			jobcd = "기타";
+			break;
+		}
+		
+		String intro = rs.getString("intro");
+	%>
+	
+	<tr>
+	<td><%= userid %></td>
+	<td><%= usernm %></td>
+	<td><%= jumin1 %></td>
+	<td><%= gender %></td>
+	<td><%= jobcd %></td>
+	<td><%= intro %></td>
+	</tr>
+	
+	<%
+	}
+	rs.close();
+	con.close();
+	stmt.close();
+	
+	%>
+	
+	</table>
+
+</body>
+&emsp;&emsp;&emsp;<a href = "main.jsp">홈으로</a>
+</html>
